@@ -4,6 +4,14 @@ const mkdirp = require('mkdirp')
 const path = require('path')
 
 /**
+ * @typedef {{
+   *   defaultValue?: any,
+ *   serialize?: (arg: Record<string, any>) => string,
+ *   deserialize?: (arg: string) => Record<string, any>
+ * }} SplitJSONAdapterOption
+ */
+
+/**
  * 
  * @param {string} path 
  * @param {(str: string) => any} parse 
@@ -27,9 +35,19 @@ const writeJSONSync = (path, value, serialize) => {
  * Data will be write into .snapshot.json instead.
  */
 class SplitJSONAdapter {
+  /**
+   * @param {string} dirPath
+   * @param {SplitJSONAdapterOption} opts
+   */
   constructor(dirPath, opts = {}) {
+    /**
+     * @type {string}
+     */
     this.dirPath = dirPath
 
+    /**
+     * @type {SplitJSONAdapterOption}
+     */
     this.opts = Object.assign({
       defaultValue: {},
       serialize: (data) => JSON.stringify(data, null, 4),
