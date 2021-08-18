@@ -182,7 +182,7 @@ class SplitJSONAdapter {
       if (keys.scriptNames.has(key)) {
         const scriptPath = path.resolve(this.dirPath, key + '.js')
         delete require.cache[scriptPath]
-        res[key] = require(scriptPath)
+        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
         continue
       }
 
@@ -203,7 +203,7 @@ class SplitJSONAdapter {
       if (keys.scriptTemplatedNames.has(key)) {
         const scriptPath = path.resolve(this.dirPath, key + '.template.js')
         delete require.cache[scriptPath]
-        res[key] = require(scriptPath)
+        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
         continue
       }
 

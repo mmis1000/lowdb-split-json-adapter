@@ -1,14 +1,16 @@
 {
   "name": "@mmis1000/lowdb-split-json-adapter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A storage adapter that save data into split json instead of a single file",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "mmis1000<mmis10002@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^27.0.1",
+    "jest": "^27.0.6",
     "lowdb": "^1.0.0",
     "mkdirp": "^1.0.4"
   }
