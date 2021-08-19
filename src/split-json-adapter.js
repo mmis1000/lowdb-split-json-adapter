@@ -214,7 +214,7 @@ class SplitJSONAdapter {
 
     for (let key of mergedKeys) {
       if (keys.scriptNames.has(key)) {
-        const scriptPath = path.resolve(this.dirPath, key + '.js')
+        const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.js'))
         delete require.cache[scriptPath]
         res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
         continue
@@ -235,7 +235,7 @@ class SplitJSONAdapter {
       }
 
       if (keys.scriptTemplatedNames.has(key)) {
-        const scriptPath = path.resolve(this.dirPath, key + '.template.js')
+        const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.template.js'))
         delete require.cache[scriptPath]
         res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
         continue
