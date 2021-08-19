@@ -12,6 +12,16 @@ const path = require('path')
  */
 
 /**
+ * @typedef {Object} FileKeys
+ * @property {Set<string>} defaultNames
+ * @property {Set<string>} existNames
+ * @property {Set<string>} templateNames
+ * @property {Set<string>} scriptNames
+ * @property {Set<string>} scriptTemplatedNames
+ * @property {Set<string>} snapshotNames
+ */
+
+/**
  * 
  * @param {string} path 
  * @param {(str: string) => any} parse 
@@ -46,12 +56,12 @@ class SplitJSONAdapter {
     this.dirPath = dirPath
 
     /**
-     * @type {SplitJSONAdapterOption}
+     * @type {Required<SplitJSONAdapterOption>}
      */
     this.opts = Object.assign({
       defaultValue: {},
-      serialize: (data) => JSON.stringify(data, null, 4),
-      deserialize: (string) => JSON.parse(string)
+      serialize: (/** @type {any} */data) => JSON.stringify(data, null, 4),
+      deserialize: (/** @type {string} */string) => JSON.parse(string)
     }, opts)
 
     if (typeof this.opts.defaultValue == null) {
@@ -143,6 +153,9 @@ class SplitJSONAdapter {
       snapshotNames
     }
   }
+  /**
+   * @param {FileKeys} keys
+   */
 
   validateKeys(keys) {
     for (const key of keys.existNames) {
@@ -184,6 +197,9 @@ class SplitJSONAdapter {
 
     const mergedKeys = this.addSets(...Object.values(keys))
 
+    /**
+     * @type {Record<string, any>}
+     */
     const res = {}
 
     /**
