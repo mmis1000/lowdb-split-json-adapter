@@ -56,6 +56,17 @@ class SplitJSONAdapter {
     this.dirPath = dirPath
 
     /**
+     * @type {boolean}
+     */
+    this.hasTypescriptSupport = false
+
+    try {
+      require('ts-node')
+      require('typescript')
+      this.hasTypescriptSupport = true
+    } catch (err) {}
+
+    /**
      * @type {Required<SplitJSONAdapterOption>}
      */
     this.opts = Object.assign({
@@ -110,12 +121,26 @@ class SplitJSONAdapter {
      */
     const scriptNames = new Set()
 
+    // readonly
+    // .js
+    /**
+     * @type {Set<string>}
+     */
+     const typescriptNames = new Set()
+
     // read from template, write to snapshot
     // .template.js
     /**
      * @type {Set<string>}
      */
     const scriptTemplatedNames = new Set()
+
+    // read from template, write to snapshot
+    // .template.ts
+    /**
+     * @type {Set<string>}
+     */
+     const typescriptTemplatedNames = new Set()
 
     // read from template, write to snapshot
     // .snapshot.json
@@ -125,14 +150,23 @@ class SplitJSONAdapter {
     const snapshotNames = new Set()
 
     for (const fileName of files) {
+      if (/\.d\.ts$/.test(fileName)) {
+        // this isn't a script file
+        continue
+      }
+
       if (/\.template\.json$/.test(fileName)) {
         templateNames.add(fileName.replace(/\.template\.json$/, ''))
       } else if (/\.snapshot\.json$/.test(fileName)) {
         snapshotNames.add(fileName.replace(/\.snapshot\.json$/, ''))
       } else if (/\.json$/.test(fileName)) {
         existNames.add(fileName.replace(/\.json$/, ''))
+      } else if (this.hasTypescriptSupport && /\.template\.ts$/.test(fileName)) {
+        typescriptTemplatedNames.add(fileName.replace(/\.template\.ts$/, ''))
       } else if (/\.template\.js$/.test(fileName)) {
         scriptTemplatedNames.add(fileName.replace(/\.template\.js$/, ''))
+      } else if (this.hasTypescriptSupport && /\.ts$/.test(fileName)) {
+        typescriptNames.add(fileName.replace(/\.ts$/, ''))
       } else if (/\.js$/.test(fileName)) {
         scriptNames.add(fileName.replace(/\.js$/, ''))
       }
@@ -145,8 +179,12 @@ class SplitJSONAdapter {
       existNames,
       /** template.json */
       templateNames,
+      /** ts */
+      typescriptNames,
       /** js */
       scriptNames,
+      /** ts */
+      typescriptTemplatedNames,
       /** template.js */
       scriptTemplatedNames,
       /** snapshot.json */
@@ -213,6 +251,13 @@ class SplitJSONAdapter {
      */
 
     for (let key of mergedKeys) {
+      if (keys.typescriptNames.has(key)) {
+        const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.ts'))
+        delete require.cache[scriptPath]
+        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
+        continue
+      }
+
       if (keys.scriptNames.has(key)) {
         const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.js'))
         delete require.cache[scriptPath]
@@ -231,6 +276,13 @@ class SplitJSONAdapter {
         const jsonPath = path.resolve(this.dirPath, key + '.json')
         const json = readJSONSync(jsonPath, this.opts.deserialize)
         res[key] = json
+        continue
+      }
+
+      if (keys.typescriptTemplatedNames.has(key)) {
+        const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.template.ts'))
+        delete require.cache[scriptPath]
+        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
         continue
       }
 

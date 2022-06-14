@@ -24,6 +24,8 @@ describe('tests', () => {
             }
         }
 
+        debugger
+
         db.read()
     });
 
@@ -113,6 +115,20 @@ describe('tests', () => {
         reload ()
 
         expect(db.get('price').value().price).toBe(50)
+        expect(
+            (await fs.readdir(path.resolve(__dirname, 'fixtures')))
+                .find(it => it === 'price.snapshot.json')
+        ).toEqual(undefined)
+    })
+
+    it('does not write anything when target is ys', async () => {
+        expect(db.get('data').value().value).toBe(50)
+        db.get('data').assign({ value: 100 }).write()
+        expect(db.get('data').value().value).toBe(100)
+
+        reload ()
+
+        expect(db.get('data').value().value).toBe(50)
         expect(
             (await fs.readdir(path.resolve(__dirname, 'fixtures')))
                 .find(it => it === 'price.snapshot.json')
