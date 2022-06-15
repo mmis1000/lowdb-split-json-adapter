@@ -24,18 +24,12 @@ describe('tests', () => {
             }
         }
 
-        debugger
-
         db.read()
     });
 
     afterEach(() => {
         return fs.rm(path.resolve(__dirname, 'tmp'), { recursive: true })
     });
-
-    function getJSON(file) {
-        return fs.readFile(file, 'utf8').then(it => JSON.parse(it))
-    }
 
     async function expectFileEqual(originalPath, newPath) {
         const original = fs.readFile(originalPath, 'utf8')
@@ -91,6 +85,20 @@ describe('tests', () => {
 
         expect(
             await fs.stat(path.resolve(__dirname, 'tmp', 'tags.snapshot.json'), 'utf-8')
+        ).not.toBeFalsy()
+    })
+
+    it('do write to snapshot file if source is template ts', async () => {
+        const item = { id: 999, name: 'aaaa' }
+        db.get('tags1').push(item).write()
+
+        reload ()
+
+        let current = db.get('tags1').find({ id: 999 }).value()
+        expect(current.name).toEqual('aaaa')
+
+        expect(
+            await fs.stat(path.resolve(__dirname, 'tmp', 'tags1.snapshot.json'), 'utf-8')
         ).not.toBeFalsy()
     })
 

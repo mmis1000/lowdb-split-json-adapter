@@ -316,7 +316,7 @@ class SplitJSONAdapter {
     this.validateKeys(keys)
 
     const ignoredKeys = keys.scriptNames // this need to be ignored
-    const snapshotKeys = this.addSets(keys.templateNames, keys.scriptTemplatedNames)
+    const snapshotKeys = this.addSets(keys.templateNames, keys.typescriptTemplatedNames, keys.scriptTemplatedNames)
 
     for (const key of Object.keys(data)) {
       if (ignoredKeys.has(key)) {
