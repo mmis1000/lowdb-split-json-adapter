@@ -315,7 +315,7 @@ class SplitJSONAdapter {
     const keys = this.readKeys(this.dirPath)
     this.validateKeys(keys)
 
-    const ignoredKeys = keys.scriptNames // this need to be ignored
+    const ignoredKeys = new Set([...keys.scriptNames, ...keys.typescriptNames]) // this need to be ignored
     const snapshotKeys = this.addSets(keys.templateNames, keys.typescriptTemplatedNames, keys.scriptTemplatedNames)
 
     for (const key of Object.keys(data)) {

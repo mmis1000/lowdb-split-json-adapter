@@ -129,7 +129,7 @@ describe('tests', () => {
         ).toEqual(undefined)
     })
 
-    it('does not write anything when target is ys', async () => {
+    it('does not write anything when target is js', async () => {
         expect(db.get('data').value().value).toBe(50)
         db.get('data').assign({ value: 100 }).write()
         expect(db.get('data').value().value).toBe(100)
@@ -140,6 +140,14 @@ describe('tests', () => {
         expect(
             (await fs.readdir(path.resolve(__dirname, 'fixtures')))
                 .find(it => it === 'price.snapshot.json')
+        ).toEqual(undefined)
+        expect(
+            (await fs.readdir(path.resolve(__dirname, 'fixtures')))
+                .find(it => it === 'data.snapshot.json')
+        ).toEqual(undefined)
+        expect(
+            (await fs.readdir(path.resolve(__dirname, 'fixtures')))
+                .find(it => it === 'data.json')
         ).toEqual(undefined)
     })
 })
