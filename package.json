@@ -1,6 +1,6 @@
 {
   "name": "@mmis1000/lowdb-split-json-adapter",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "A storage adapter that save data into split json instead of a single file",
   "main": "index.js",
   "scripts": {
