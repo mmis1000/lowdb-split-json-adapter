@@ -41,6 +41,24 @@ const writeJSONSync = (path, value, serialize) => {
 }
 
 /**
+ * 
+ * @param {unknown} obj 
+ */
+const importDefault = (obj) => {
+  if (
+    obj != null
+    && typeof obj === 'object'
+    && '__esModule' in obj
+    && /** @type {{ __esModule: unknown }} */(obj)['__esModule'] === true
+    && /** @type {{ default?: unknown }} */(obj).default != null
+  ) {
+    return /** @type {{ default?: unknown }} */(obj).default
+  } else {
+    return obj
+  }
+}
+
+/**
  * If either `template.js` or `template.json` exists.  
  * Data will be write into .snapshot.json instead.
  */
@@ -254,14 +272,14 @@ class SplitJSONAdapter {
       if (keys.typescriptNames.has(key)) {
         const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.ts'))
         delete require.cache[scriptPath]
-        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
+        res[key] = JSON.parse(JSON.stringify(importDefault(require(scriptPath))))
         continue
       }
 
       if (keys.scriptNames.has(key)) {
         const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.js'))
         delete require.cache[scriptPath]
-        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
+        res[key] = JSON.parse(JSON.stringify(importDefault(require(scriptPath))))
         continue
       }
 
@@ -282,14 +300,14 @@ class SplitJSONAdapter {
       if (keys.typescriptTemplatedNames.has(key)) {
         const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.template.ts'))
         delete require.cache[scriptPath]
-        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
+        res[key] = JSON.parse(JSON.stringify(importDefault(require(scriptPath))))
         continue
       }
 
       if (keys.scriptTemplatedNames.has(key)) {
         const scriptPath = require.resolve(path.resolve(this.dirPath, key + '.template.js'))
         delete require.cache[scriptPath]
-        res[key] = JSON.parse(JSON.stringify(require(scriptPath)))
+        res[key] = JSON.parse(JSON.stringify(importDefault(require(scriptPath))))
         continue
       }
 

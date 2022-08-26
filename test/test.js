@@ -150,4 +150,8 @@ describe('tests', () => {
                 .find(it => it === 'data.json')
         ).toEqual(undefined)
     })
+    it('does load default as value when source is esModule transpiled file', async () => {
+        expect(db.get('esmodule').value().value).toBe(51)
+        expect(db.get('esmodule-ts').value().value).toBe(52)
+    })
 })
